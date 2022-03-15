@@ -7,7 +7,8 @@ const routes = [
     {
         path: '/dashboard',
         name: 'Dashboard',
-        component: Dashboard
+        component: Dashboard,
+        meta: {requireAuth: true },
     },
     {
         path: '/login',
