@@ -1,26 +1,96 @@
-
-import {createStore} from "vuex";
+import { createStore } from "vuex";
+import axiosClient from "../axios";
 
 const store = createStore({
-    state: {
-        user: {
-            data: {
-                name: 'Tom Cook',
-                email: 'tom@example.com',
-                imageUrl:'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-            },
-            token: 123 
-        }
+  state: {
+    user: {
+      data: {},
+      token: 123,
     },
-    getters: {},
-    actions: {},
-    mutations: {
-        logout: state => {
-            state.user.data = {};
-            state.user.token= null;
-        }
+    dashboard: {
+      loading: false,
+      data: {}
     },
-    modules: {}
-})
+  },
+  getters: {},
+  actions: {
+
+    register({commit}, user) {
+      return axiosClient.post('/register', user)
+        .then(({data}) => {
+          commit('setUser', data.user);
+          commit('setToken', data.token)
+          return data;
+        })
+    },
+    login({commit}, user) {
+      return axiosClient.post('/login', user)
+        .then(({data}) => {
+          commit('setUser', data.user);
+          commit('setToken', data.token)
+          return data;
+        })
+    },
+    logout({commit}) {
+      return axiosClient.post('/logout')
+        .then(response => {
+          commit('logout')
+          return response;
+        })
+    },
+    getUser({commit}) {
+      return axiosClient.get('/user')
+      .then(res => {
+        console.log(res);
+        commit('setUser', res.data)
+      })
+    },
+    getDashboardData({commit}) {
+      commit('dashboardLoading', true)
+      return axiosClient.get(`/dashboard`)
+      .then((res) => {
+        commit('dashboardLoading', false)
+        commit('setDashboardData', res.data)
+        return res;
+      })
+      .catch(error => {
+        commit('dashboardLoading', false)
+        return error;
+      })
+
+    },
+    
+  },
+  mutations: {
+    logout: (state) => {
+      state.user.token = null;
+      state.user.data = {};
+      sessionStorage.removeItem("TOKEN");
+    },
+
+    setUser: (state, user) => {
+      state.user.data = user;
+    },
+    setToken: (state, token) => {
+      state.user.token = token;
+      sessionStorage.setItem('TOKEN', token);
+    },
+    dashboardLoading: (state, loading) => {
+      state.dashboard.loading = loading;
+    },
+    setDashboardData: (state, data) => {
+      state.dashboard.data = data
+    },
+    notify: (state, {message, type}) => {
+      state.notification.show = true;
+      state.notification.type = type;
+      state.notification.message = message;
+      setTimeout(() => {
+        state.notification.show = false;
+      }, 3000)
+    },
+  },
+  modules: {},
+});
 
 export default store;
