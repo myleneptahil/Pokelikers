@@ -1,18 +1,21 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PokemonListController;
+use App\Http\Controllers\PokemonPollsSurveyController;
 
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/home', function () {
+    echo "Please love Pokemon so that you can access this site.";
+});
+
+
+Route::get('/pokemonlist', [PokemonListController::class,'index']);
+
+Route::get('/profile', [ProfileController::class,'index']);
+
+Route::get('/pokemonpollssurvey', [PokemonPollsSurveyController::class,'index']);
