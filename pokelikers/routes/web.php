@@ -19,3 +19,7 @@ Route::get('/pokemonlist', [PokemonListController::class,'index']);
 Route::get('/profile', [ProfileController::class,'index']);
 
 Route::get('/pokemonpollssurvey', [PokemonPollsSurveyController::class,'index']);
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
